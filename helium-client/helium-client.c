@@ -160,8 +160,8 @@ send_command(struct helium_ctx * ctx)
     ctx->txn.seq = seq;
 
     struct caut_encode_iter ei;
-    caut_encode_iter_init(&ei, ctx->buf, sizeof(ctx->buf));
-    if (caut_status_ok != encode_txn(&ei, &ctx->txn))
+    caut_encode_iter_init(&ei, ctx->buf, sizeof(ctx->buf));			//build error here.
+    if (caut_status_ok != encode_txn(&ei, &ctx->txn))					//build error here.
     {
         return send_command_ERR_ENCODE;
     }
@@ -196,8 +196,8 @@ send_command(struct helium_ctx * ctx)
 #endif
 
     struct caut_decode_iter di;
-    caut_decode_iter_init(&di, ctx->buf, len);
-    if (caut_status_ok != decode_txn(&di, &ctx->txn))
+    caut_decode_iter_init(&di, ctx->buf, len);					//build error here.
+    if (caut_status_ok != decode_txn(&di, &ctx->txn))				//build error here.
     {
         return send_command_ERR_DECODE;
     }

@@ -45,8 +45,8 @@ static void caut_encode_iter_advance(P * iter, size_t adv) {
 }
 
 void caut_decode_iter_init(U * iter, void * buffer, size_t length) {
-  CAUT_ASSERT(iter);
-  CAUT_ASSERT(buffer);
+  CAUT_ASSERT(iter);															//Build Error
+  CAUT_ASSERT(buffer);															//Build Error
 
   iter->buffer = buffer;
   iter->length = length;

@@ -9,6 +9,8 @@
 
 #include "Helium.h"
 
+STARTUP(WiFi.selectAntenna(ANT_EXTERNAL));
+
 USARTSerial * serial = &Serial1;
 
 Helium helium(serial);
@@ -43,13 +45,13 @@ void setup(){
     // Begin communication with the Helium Atom
     // The baud rate differs per supported board
     // and is configured in Board.h
-//    helium.begin(helium_baud_b115200);
+    helium.begin(helium_baud_b115200);
 
     // Connect the Atom to the Helium Network
     Serial.print("Connecting - ");
     int status = helium.connect();
     // Print status
-//    report_status(status);
+    report_status(status);
 
     // Begin communicating with the channel. This should only need to
     // be done once.
@@ -58,12 +60,11 @@ void setup(){
     // MQTT" called in the Helium Dashboard.
     int8_t result;
     Serial.print("Creating Channel - ");
-//    status = channel.begin("Helium MQTT", &result);
+    status = channel.begin("Helium MQTT", &result);
     // Print status and result
-//    report_status(status, result);
+    report_status(status, result);
 }
 
 void loop(){
-	Serial.println("running");
-	delay(1000);
+
 }

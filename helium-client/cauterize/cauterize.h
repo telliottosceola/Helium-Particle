@@ -52,7 +52,7 @@ typedef uint64_t caut_tag64_t;
 #define CAUT_ASSERT(EXP) \
   do { \
     if (!(EXP)) { \
-      printf("ASSERT FAIL on %s:%u\n\t" #EXP, __FILE__, __LINE__); \
+      /*printf("ASSERT FAIL on %s:%u\n\t" #EXP, __FILE__, __LINE__);*/ \
       exit(__LINE__); \
     } \
   } while(0)
