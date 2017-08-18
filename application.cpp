@@ -66,5 +66,15 @@ void setup(){
 }
 
 void loop(){
+	const char * data = "Hello Helium!";
 
+	// Send some data to the configured channel
+	int8_t result;
+	Serial.print("Sending - ");
+	int    status = channel.send(data, strlen(data), &result);
+	// Print status and result
+	report_status(status, result);
+
+	// Wait a while till the next time
+	delay(5000);
 }
