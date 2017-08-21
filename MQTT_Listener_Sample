@@ -1,0 +1,117 @@
+/*
+ *
+ *  Created on: Aug 17, 2017
+ *      Author: travis
+ */
+
+#include "application.h"
+
+#include "Helium.h"
+
+STARTUP(WiFi.selectAntenna(ANT_EXTERNAL));
+
+USARTSerial * serial = &Serial1;
+
+Helium helium(serial);
+
+Channel channel(&helium);
+
+#define CHANNEL_NAME "Helium MQTT"
+
+int
+report_status(int status, int result = 0)
+{
+    if (helium_status_OK == status)
+    {
+        if (result == 0)
+        {
+            Serial.println("Succeeded");
+        }
+        else
+        {
+            Serial.print("Failed - ");
+            Serial.println(result);
+        }
+    }
+    else
+    {
+        Serial.println("Failed");
+    }
+    return status;
+}
+
+
+void
+connect()
+{
+    while (!helium.connected())
+    {
+        Serial.print("Connecting - ");
+        int status = helium.connect();
+        if (report_status(status) != helium_status_OK)
+        {
+            delay(1000);
+        }
+    }
+}
+
+
+void channel_create(const char * channel_name)
+{
+    int8_t result;
+    int    status;
+    do
+    {
+        // Ensure we're connected
+        connect();
+        Serial.print("Creating Channel - ");
+        status = channel.begin(channel_name, &result);
+        // Print status and result
+        if (report_status(status, result) != helium_status_OK)
+        {
+            delay(1000);
+        }
+    } while (helium_status_OK != status || result != 0);
+}
+
+void channel_poll(void * data, size_t len, size_t * used)
+{
+    int status;
+    do
+    {
+        Serial.print("Polling - ");
+        // Poll the channel for some data for some time
+        status = channel.poll_data(data, len, used);
+    } while (report_status(status) != helium_status_OK);
+}
+
+void setup(){
+	    Serial.println("Starting");
+
+	    // Begin communication with the Helium Atom
+	    // The baud rate differs per supported board
+	    // and is configured in Board.h
+	    helium.begin(helium_baud_b115200);
+
+	    // Connect the Atom to the Helium Network
+	    connect();
+	    // and ensure the channel is created
+	    channel_create(CHANNEL_NAME);
+}
+
+void loop(){
+	// Create a buffer of the maximum Helium network packet size
+	    char   data[HELIUM_MAX_DATA_SIZE];
+	    size_t data_used;
+
+	    // Call the poll utility function below which pings the network to
+	    // ask for data.
+	    channel_poll(data, HELIUM_MAX_DATA_SIZE, &data_used);
+	    // Convert to a printable string
+	    data[data_used] = '\0';
+	    if (data_used > 0)
+	    {
+	        Serial.print("Data - ");
+	        Serial.println(data);
+	    }
+}
